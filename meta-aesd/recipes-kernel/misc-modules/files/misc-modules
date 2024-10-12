@@ -1,0 +1,29 @@
+#! /bin/sh
+
+MODULES="sleepy silly seq jiq hellop hello complete"
+FAULTY="/lib/modules/$(uname -r)/extra/faulty.ko"
+
+case "$1" in
+    start)
+        echo "Starting misc-modules"
+        for module in $MODULES; do
+            echo "Loading module: $module"
+            /etc/init.d/module_load.sh $module
+        done
+        echo "Loading module: faulty"
+        insmod "$FAULTY"
+        ;;
+    stop)
+        echo "Stopping misc-modules"
+        for module in $MODULES; do
+            echo "Stopping module: $module"
+            /etc/init.d/module_unload.sh $module
+        done
+        echo "Stopping module: faulty"
+        rmmod "$FAULTY"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop}"
+        exit 1
+esac
+exit 0
